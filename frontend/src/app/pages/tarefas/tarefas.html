@@ -1,0 +1,24 @@
+<section class="tarefas-page">
+  <header>
+    <h1>Tarefas</h1>
+    <button type="button" (click)="logout()">Sair</button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="createTarefa()">
+    <input type="text" placeholder="Descricao da tarefa" formControlName="descricao" />
+    <select formControlName="status_id">
+      <option [value]="1">Finalizada</option>
+      <option [value]="2">Pendente</option>
+    </select>
+    <button type="submit" [disabled]="form.invalid">Criar</button>
+  </form>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p *ngIf="loading">Carregando...</p>
+
+  <ul>
+    <li *ngFor="let tarefa of tarefas">
+      <strong>#{{ tarefa.id }}</strong> - {{ tarefa.descricao }} (status: {{ tarefa.status_id }})
+    </li>
+  </ul>
+</section>

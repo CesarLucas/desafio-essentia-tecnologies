@@ -1,0 +1,100 @@
+// Reutilizando a base sistemática da TechX
+$primary: #1a237e;
+$bg-light: #f4f7fe;
+$text-main: #2d3436;
+$text-muted: #636e72;
+$error: #d63031;
+$success: #00b894;
+$white: #ffffff;
+
+.login-container {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  height: 100vh;
+  font-family: 'Inter', sans-serif;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    .hero-section { display: none; }
+  }
+}
+
+// Lado Esquerdo (Igual ao Login para Consistência)
+.hero-section {
+  background-color: $bg-light;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px;
+
+  .logo-placeholder {
+    font-size: 2rem;
+    font-weight: 800;
+    color: $primary;
+  }
+
+  .hero-content {
+    h1 { font-size: 3.5rem; color: $primary; font-weight: 800; margin-bottom: 10px; }
+    p { font-size: 1.5rem; color: $text-muted; font-weight: 300; }
+  }
+
+  .status-badge {
+    font-size: 0.8rem; color: $text-muted; display: flex; align-items: center; gap: 8px;
+    .dot { width: 8px; height: 8px; background: $success; border-radius: 50%; }
+  }
+}
+
+// Lado Direito (Formulário)
+.form-section {
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+
+  .form-wrapper { width: 100%; max-width: 400px; }
+
+  .form-header {
+    margin-bottom: 32px;
+    h2 { font-size: 1.8rem; color: $text-main; }
+    p { color: $text-muted; font-size: 0.95rem; }
+  }
+}
+
+// Inputs e Botões
+.auth-form {
+  .input-group {
+    margin-bottom: 20px;
+    label { display: block; font-size: 0.85rem; font-weight: 600; color: $text-main; margin-bottom: 8px; }
+    input {
+      width: 100%; padding: 12px 16px; border: 1.5px solid #dfe6e9; border-radius: 8px;
+      &:focus { outline: none; border-color: $primary; box-shadow: 0 0 0 3px rgba($primary, 0.1); }
+      &.error { border-color: $error; }
+    }
+    small { color: $error; font-size: 0.75rem; margin-top: 4px; display: block; }
+  }
+}
+
+.btn-primary {
+  width: 100%; padding: 14px; background: $primary; color: white; border: none; border-radius: 8px;
+  font-weight: 600; cursor: pointer;
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+// Mensagens de Feedback
+.error-message, .success-message {
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.error-message { background: rgba($error, 0.1); color: $error; }
+.success-message { background: rgba($success, 0.1); color: $success; }
+
+.form-footer {
+  margin-top: 24px; text-align: center;
+  p { font-size: 0.9rem; color: $text-muted; }
+  a { color: $primary; font-weight: 600; text-decoration: none; &:hover { text-decoration: underline; } }
+}

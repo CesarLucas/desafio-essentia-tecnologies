@@ -22,7 +22,7 @@ export function authMiddleware(
 
   try {
     if (!env.JWT_SECRET) {
-      return res.status(500).json({ message: "JWT_SECRET nÃ£o configurado" });
+      return res.status(500).json({ message: "JWT_SECRET não configurado" });
     }
 
     const payload = jwt.verify(token, env.JWT_SECRET) as {

@@ -1,4 +1,11 @@
 import { TarefaRepository } from "../repositories/Tarefa.repository";
+import { CreateTarefaDto, TarefaResponseDto } from "../dtos/Tarefa.dto";
+
+export class TarefaHttpError extends Error {
+  constructor(public statusCode: number, message: string) {
+    super(message);
+  }
+}
 
 export class TarefaService {
   constructor(private repo = new TarefaRepository()) {}
@@ -7,9 +14,17 @@ export class TarefaService {
     return this.repo.findAllByUser(userId);
   }
 
-  async create(userId: number, descricao: string, status_id: number) {
-    const id = await this.repo.create(userId, descricao, status_id);
-    // opcional: buscar e retornar a task criada
+  async create(userId: number, dto: CreateTarefaDto): Promise<TarefaResponseDto> {
+    const descricao = dto.descricao?.trim();
+    if (!descricao) {
+      throw new TarefaHttpError(400, "Descrição é obrigatoria");
+    }
+
+    if (!Number.isInteger(dto.status_id) || dto.status_id <= 0) {
+      throw new TarefaHttpError(400, "status_id invalido");
+    }
+
+    const id = await this.repo.create(userId, descricao, dto.status_id);
     return { id };
   }
 
