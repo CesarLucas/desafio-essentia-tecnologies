@@ -2,6 +2,15 @@ import { pool } from "../db/pool";
 import { Tarefa } from "../models/Tarefa";
 
 export class TarefaRepository {
+  async findAll(): Promise<Tarefa[]> {
+    const [rows] = await pool.query(
+      `SELECT id, descricao, criado_por, status_id, finalizado_em, finalizado_por, created_at, updated_at
+       FROM tarefa
+       ORDER BY id DESC`
+    );
+    return rows as Tarefa[];
+  }
+
   async findAllByUser(userId: number): Promise<Tarefa[]> {
     const [rows] = await pool.query(
       `SELECT id, descricao, criado_por, status_id, finalizado_em, finalizado_por, created_at, updated_at

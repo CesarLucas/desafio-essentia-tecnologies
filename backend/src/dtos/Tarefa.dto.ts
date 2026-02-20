@@ -3,6 +3,11 @@ export interface CreateTarefaDto {
   status_id: number;
 }
 
+export interface UpdateTarefaStatusDto {
+  status_id: number;
+}
+
 export interface TarefaResponseDto {
-  id: number;
+  id?: number;
+  message: string
 }

@@ -8,6 +8,9 @@ const controller = new TarefasController();
 router.use(authMiddleware); 
 
 router.get("/", controller.list);
+router.get("/todas", controller.listAll);
 router.post("/", controller.create);
+router.patch("/:id/status", controller.updateStatus);
+router.delete("/:id", controller.remove);
 
 export default router;
