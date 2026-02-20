@@ -45,7 +45,7 @@ export class AuthService {
       signOptions.expiresIn = env.JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"];
     }
 
-    const token = jwt.sign({ userId: user.id }, env.JWT_SECRET, signOptions);
+    const token = jwt.sign({ userId: user.id, nome: user.nome }, env.JWT_SECRET, signOptions);
     return { token };
   }
 

@@ -5,6 +5,11 @@ interface LoginResponse {
   token: string;
 }
 
+interface TokenPayload {
+  userId?: number;
+  nome?: string;
+}
+
 interface RegisterResponse {
   id: number;
   nome: string;
@@ -48,11 +53,37 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  getLoggedUserId(): number | null {
+    const payload = this.getTokenPayload();
+    return typeof payload?.userId === 'number' ? payload.userId : null;
+  }
+
+  getLoggedUserName(): string {
+    const payload = this.getTokenPayload();
+    return payload?.nome?.trim() || 'Usuario';
+  }
+
   logout(): void {
     localStorage.removeItem('token');
   }
 
   isLoggedIn(): boolean {
     return !!this.getToken();
+  }
+
+  private getTokenPayload(): TokenPayload | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    const parts = token.split('.');
+    if (parts.length < 2) return null;
+
+    try {
+      const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const json = atob(base64);
+      return JSON.parse(json) as TokenPayload;
+    } catch {
+      return null;
+    }
   }
 }

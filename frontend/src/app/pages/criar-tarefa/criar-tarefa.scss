@@ -77,32 +77,6 @@ nav {
   color: $white;
 }
 
-.menu-title {
-  margin: 28px 0 10px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  opacity: 0.8;
-}
-
-.filter-btn {
-  width: 100%;
-  text-align: left;
-  border: 0;
-  border-radius: 10px;
-  padding: 10px 12px;
-  margin-bottom: 8px;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.84);
-  cursor: pointer;
-}
-
-.filter-btn.active,
-.filter-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: $white;
-}
-
 .content {
   flex: 1;
   padding: 24px 28px;
@@ -125,48 +99,44 @@ nav {
 
 .topbar-actions {
   display: flex;
-  align-items: center;
   gap: 10px;
 }
 
-.user-name {
-  color: $muted;
+.btn-primary,
+.btn-secondary,
+.btn-logout {
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
   font-weight: 600;
 }
 
-.btn-outline {
-  text-decoration: none;
-  border: 1px solid $primary;
-  color: $primary;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-weight: 600;
+.btn-primary {
+  border: 0;
+  background: $primary;
+  color: $white;
+}
+
+.btn-secondary {
+  border: 1px solid $border;
   background: $white;
-  cursor: pointer;
+  color: $text;
 }
 
 .btn-logout {
   border: 1px solid $border;
   background: $white;
   color: $text;
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-.btn-danger {
-  border: 1px solid #d63031;
-  color: #d63031;
-  background: $white;
-  padding: 8px 12px;
-  border-radius: 10px;
-  cursor: pointer;
 }
 
 .panel {
   margin-top: 16px;
   display: grid;
   gap: 12px;
+}
+
+.panel h2 {
+  margin: 0 0 4px;
 }
 
 .task-card {
@@ -204,23 +174,15 @@ nav {
   color: #0b68bd;
 }
 
-.status[data-status='4'] {
-  color: #8e44ad;
-}
-
-.card-actions {
-  margin-top: 10px;
-  display: flex;
-  gap: 8px;
-}
-
-.error {
+.feedback {
   margin: 0;
+}
+
+.feedback.error {
   color: #d63031;
 }
 
-.success {
-  margin: 0;
+.feedback.success {
   color: #0a8f62;
 }
 
@@ -229,48 +191,51 @@ nav {
   color: $muted;
 }
 
-.modal-backdrop {
+.modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(20, 26, 64, 0.45);
   display: grid;
   place-items: center;
+  padding: 16px;
   z-index: 1000;
 }
 
 .modal {
-  width: min(460px, 92vw);
+  width: min(100%, 480px);
   background: $white;
-  border: 1px solid $border;
   border-radius: 14px;
-  padding: 16px;
+  padding: 20px;
+  box-shadow: 0 30px 50px rgba(26, 35, 126, 0.25);
+}
+
+.modal h3 {
+  margin: 0 0 14px;
+}
+
+.modal form {
   display: grid;
   gap: 10px;
 }
 
-.modal-subtitle {
-  margin: 0;
-  color: $muted;
+.modal label {
+  color: $text;
   font-size: 14px;
+  font-weight: 600;
 }
 
+.modal input,
 .modal select {
-  padding: 10px;
   border: 1px solid $border;
   border-radius: 10px;
-}
-
-.modal textarea {
-  padding: 10px;
-  border: 1px solid $border;
-  border-radius: 10px;
-  resize: vertical;
+  padding: 10px 12px;
 }
 
 .modal-actions {
+  margin-top: 10px;
   display: flex;
   justify-content: flex-end;
-  gap: 8px;
+  gap: 10px;
 }
 
 .sidebar-collapsed .sidebar {

@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { TarefaService, TarefaHttpError } from "../services/Tarefa.service";
 import { AuthRequest } from "../middlewares/auth.middleware";
-import { CreateTarefaDto, UpdateTarefaStatusDto } from "../dtos/Tarefa.dto";
+import { CreateTarefaDto, UpdateTarefaDescricaoDto, UpdateTarefaStatusDto } from "../dtos/Tarefa.dto";
 
 export class TarefasController {
   constructor(private service = new TarefaService()) {}
@@ -43,6 +43,21 @@ export class TarefasController {
       const taskId = Number(req.params.id);
       const dto = req.body as UpdateTarefaStatusDto;
       const result = await this.service.updateStatus(req.userId!, taskId, dto);
+      res.json(result);
+    } catch (error) {
+      if (error instanceof TarefaHttpError) {
+        return res.status(error.statusCode).json({ message: error.message });
+      }
+
+      return res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  };
+
+  updateDescription = async (req: AuthRequest, res: Response) => {
+    try {
+      const taskId = Number(req.params.id);
+      const dto = req.body as UpdateTarefaDescricaoDto;
+      const result = await this.service.updateDescription(req.userId!, taskId, dto);
       res.json(result);
     } catch (error) {
       if (error instanceof TarefaHttpError) {

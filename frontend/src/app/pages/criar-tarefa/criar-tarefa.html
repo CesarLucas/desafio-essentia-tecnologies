@@ -1,0 +1,72 @@
+<div class="layout" [class.sidebar-collapsed]="sidebarCollapsed">
+  <aside class="sidebar">
+    <button class="corner-toggle" type="button" (click)="toggleSidebar()" [attr.aria-label]="sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'">
+      {{ sidebarCollapsed ? '>' : '<' }}
+    </button>
+
+    <button class="sidebar-icon" type="button" *ngIf="sidebarCollapsed" (click)="toggleSidebar()" aria-label="Expandir menu">
+      TX
+    </button>
+
+    <div class="sidebar-content" *ngIf="!sidebarCollapsed">
+      <h2>TechX</h2>
+      <nav>
+        <a routerLink="/tarefas" class="nav-link">Tarefas</a>
+        <a routerLink="/criar-tarefa" class="nav-link active">Criar tarefa</a>
+      </nav>
+    </div>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <h1>Criar tarefa</h1>
+      <div class="topbar-actions">
+        <button type="button" class="btn-primary" (click)="openModal()">+ Adicionar Tarefa</button>
+      </div>
+    </header>
+
+    <section class="panel">
+      <p class="feedback success" *ngIf="success">{{ success }}</p>
+      <p class="feedback error" *ngIf="error">{{ error }}</p>
+
+      <h2>Tarefas recentes</h2>
+      <p class="empty" *ngIf="!loading && tarefas.length === 0">Nenhuma tarefa cadastrada ainda.</p>
+
+      <div class="task-card" *ngFor="let tarefa of tarefas">
+        <div>
+          <p class="label">Descricao</p>
+          <p class="value">{{ tarefa.descricao }}</p>
+        </div>
+        <div>
+          <p class="label">Status</p>
+          <p class="status" [attr.data-status]="tarefa.status_id">{{ getStatusNome(tarefa.status_id) }}</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-overlay" *ngIf="modalOpen" (click)="closeModal()">
+  <section class="modal" (click)="$event.stopPropagation()">
+    <h3>Nova tarefa</h3>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <label for="descricao">Descricao</label>
+      
+      <input id="descricao" type="text" minlength="15"
+        maxlength="300" formControlName="descricao" placeholder="Ex.: Revisar documentacao" />
+      <label for="status">Status inicial</label>
+      <select id="status" formControlName="status_id">
+        <option [value]="3">Nao iniciada</option>
+        <option [value]="2">Em andamento</option>
+        <option [value]="1">Finalizada</option>
+      </select>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" type="button" (click)="closeModal()">Cancelar</button>
+        <button class="btn-primary" type="submit" [disabled]="submitting || form.invalid">
+          {{ submitting ? 'Salvando...' : 'Salvar tarefa' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

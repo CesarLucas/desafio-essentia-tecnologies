@@ -1,5 +1,5 @@
 import { TarefaRepository } from "../repositories/Tarefa.repository";
-import { CreateTarefaDto, TarefaResponseDto, UpdateTarefaStatusDto } from "../dtos/Tarefa.dto";
+import { CreateTarefaDto, TarefaResponseDto, UpdateTarefaDescricaoDto, UpdateTarefaStatusDto } from "../dtos/Tarefa.dto";
 
 export class TarefaHttpError extends Error {
   constructor(public statusCode: number, message: string) {
@@ -42,20 +42,31 @@ export class TarefaService {
       throw new TarefaHttpError(400, "status_id invalido");
     }
 
-    const updated = await this.repo.update(userId, taskId, {
-      status_id: dto.status_id,
-      finalizado_por: userId,
-    });
+    const updated = await this.repo.updateStatusAnyUser(taskId, dto.status_id, userId);
 
     if (!updated) {
-      throw new TarefaHttpError(404, "Tarefa nao encontrada para este usuario");
+      throw new TarefaHttpError(404, "Tarefa nao encontrada");
     }
 
     return { message: "Status atualizado com sucesso" };
   }
 
-  update(userId: number, taskId: number, dto: { descricao?: string; status_id?: number; finalizado_por?: number | null; }) {
-    return this.repo.update(userId, taskId, dto);
+  async updateDescription(userId: number, taskId: number, dto: UpdateTarefaDescricaoDto) {
+    if (!Number.isInteger(taskId) || taskId <= 0) {
+      throw new TarefaHttpError(400, "taskId invalido");
+    }
+
+    const descricao = dto.descricao?.trim();
+    if (!descricao) {
+      throw new TarefaHttpError(400, "Descricao e obrigatoria");
+    }
+
+    const updated = await this.repo.update(userId, taskId, { descricao });
+    if (!updated) {
+      throw new TarefaHttpError(404, "Tarefa nao encontrada para este usuario");
+    }
+
+    return { message: "Descricao atualizada com sucesso" };
   }
 
   async remove(userId: number, taskId: number) {

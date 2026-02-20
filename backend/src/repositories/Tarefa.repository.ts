@@ -4,19 +4,21 @@ import { Tarefa } from "../models/Tarefa";
 export class TarefaRepository {
   async findAll(): Promise<Tarefa[]> {
     const [rows] = await pool.query(
-      `SELECT id, descricao, criado_por, status_id, finalizado_em, finalizado_por, created_at, updated_at
-       FROM tarefa
-       ORDER BY id DESC`
+      `SELECT t.id, t.descricao, t.criado_por, u.nome AS criado_por_nome, t.status_id, t.finalizado_em, t.finalizado_por, t.created_at, t.updated_at
+       FROM tarefa t
+       INNER JOIN usuario u ON u.id = t.criado_por
+       ORDER BY t.id DESC`
     );
     return rows as Tarefa[];
   }
 
   async findAllByUser(userId: number): Promise<Tarefa[]> {
     const [rows] = await pool.query(
-      `SELECT id, descricao, criado_por, status_id, finalizado_em, finalizado_por, created_at, updated_at
-       FROM tarefa
-       WHERE criado_por = ?
-       ORDER BY id DESC`,
+      `SELECT t.id, t.descricao, t.criado_por, u.nome AS criado_por_nome, t.status_id, t.finalizado_em, t.finalizado_por, t.created_at, t.updated_at
+       FROM tarefa t
+       INNER JOIN usuario u ON u.id = t.criado_por
+       WHERE t.criado_por = ?
+       ORDER BY t.id DESC`,
       [userId]
     );
     return rows as Tarefa[];
@@ -53,6 +55,30 @@ export class TarefaRepository {
     const [result] = await pool.execute(
       `UPDATE tarefa SET ${sets.join(", ")}
        WHERE id = ? AND criado_por = ?`,
+      values
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return ((result as any).affectedRows as number) > 0;
+  }
+
+  async updateStatusAnyUser(taskId: number, statusId: number, finalizadoPor: number): Promise<boolean> {
+    const sets: string[] = ["status_id = ?"];
+    const values: unknown[] = [statusId];
+
+    if (statusId === 1) {
+      sets.push("finalizado_em = CURRENT_TIMESTAMP");
+      sets.push("finalizado_por = ?");
+      values.push(finalizadoPor);
+    } else {
+      sets.push("finalizado_em = NULL");
+      sets.push("finalizado_por = NULL");
+    }
+
+    values.push(taskId);
+
+    const [result] = await pool.execute(
+      `UPDATE tarefa SET ${sets.join(", ")}
+       WHERE id = ?`,
       values
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

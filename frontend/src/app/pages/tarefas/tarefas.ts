@@ -1,48 +1,85 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth';
 import { Tarefa, TarefasService } from '../../services/tarefas/tarefas';
+
+type FiltroStatus = 'all' | '1' | '2' | '3' | '4';
 
 @Component({
   selector: 'app-tarefas',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './tarefas.html',
   styleUrl: './tarefas.scss',
 })
 export class TarefasComponent implements OnInit {
-  private readonly fb = inject(FormBuilder);
   private readonly tarefasService = inject(TarefasService);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
   tarefas: Tarefa[] = [];
   error = '';
+  success = '';
   loading = false;
-
-  form = this.fb.group({
-    descricao: ['', [Validators.required]],
-    status_id: [2, [Validators.required]],
-  });
+  sidebarCollapsed = false;
+  filtroAtual: FiltroStatus = 'all';
+  statusModalAberto = false;
+  statusModalLoading = false;
+  statusSelecionado = 2;
+  descricaoModalAberto = false;
+  descricaoModalLoading = false;
+  novaDescricao = '';
+  tarefaSelecionada: Tarefa | null = null;
+  loggedUserName = '';
+  loggedUserId: number | null = null;
 
   ngOnInit(): void {
+    this.loggedUserName = this.auth.getLoggedUserName();
+    this.loggedUserId = this.auth.getLoggedUserId();
     this.loadTarefas();
   }
 
-  loadTarefas() {
+  toggleSidebar(): void {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+  }
+
+  setFiltro(filtro: FiltroStatus): void {
+    this.filtroAtual = filtro;
+  }
+
+  isFiltroAtivo(filtro: FiltroStatus): boolean {
+    return this.filtroAtual === filtro;
+  }
+
+  get tarefasFiltradas(): Tarefa[] {
+    if (this.filtroAtual === 'all') return this.tarefas;
+    return this.tarefas.filter((tarefa) => tarefa.status_id.toString() === this.filtroAtual);
+  }
+
+  getStatusNome(statusId: number): string {
+    const statusMap: Record<number, string> = {
+      1: 'Finalizada',
+      2: 'Em andamento',
+      3: 'Nao iniciada',
+      4: 'Cancelado',
+    };
+    return statusMap[statusId] ?? 'Desconhecido';
+  }
+
+  loadTarefas(): void {
     this.loading = true;
     this.error = '';
+    this.success = '';
 
-    this.tarefasService.list().subscribe({
+    this.tarefasService.listAll().subscribe({
       next: (data) => {
         this.tarefas = data;
-        this.loading = false;
+        this.tarefasService.setAllCache(data);
       },
       error: (err) => {
         this.error = err?.error?.message ?? 'Falha ao carregar tarefas';
-        this.loading = false;
       },
       complete: () => {
         this.loading = false;
@@ -50,25 +87,142 @@ export class TarefasComponent implements OnInit {
     });
   }
 
-  createTarefa() {
+  abrirModalStatus(tarefa: Tarefa): void {
+    this.tarefaSelecionada = tarefa;
+    this.statusSelecionado = tarefa.status_id;
+    this.statusModalAberto = true;
     this.error = '';
-    if (this.form.invalid) return;
+  }
 
-    const { descricao, status_id } = this.form.getRawValue();
-    if (!descricao || !status_id) return;
+  fecharModalStatus(): void {
+    this.statusModalAberto = false;
+    this.tarefaSelecionada = null;
+  }
 
-    this.tarefasService.create(descricao, Number(status_id)).subscribe({
-      next: () => {
-        this.form.patchValue({ descricao: '', status_id: 2 });
-        this.loadTarefas();
+  abrirModalDescricao(tarefa: Tarefa): void {
+    this.tarefaSelecionada = tarefa;
+    this.novaDescricao = tarefa.descricao;
+    this.descricaoModalAberto = true;
+    this.error = '';
+  }
+
+  fecharModalDescricao(): void {
+    this.descricaoModalAberto = false;
+    this.tarefaSelecionada = null;
+    this.novaDescricao = '';
+  }
+
+  salvarStatus(): void {
+    if (!this.tarefaSelecionada) return;
+
+    const tarefaId = this.tarefaSelecionada.id;
+    const novoStatus = this.statusSelecionado;
+    const tarefaAtual = this.tarefas.find((tarefa) => tarefa.id === tarefaId);
+    const statusAnterior = tarefaAtual?.status_id ?? novoStatus;
+    this.statusModalLoading = true;
+    this.error = '';
+    this.success = '';
+
+    this.tarefas = this.tarefas.map((tarefa) =>
+      tarefa.id === tarefaId ? { ...tarefa, status_id: novoStatus } : tarefa
+    );
+    this.tarefasService.updateTaskInAllCache(tarefaId, { status_id: novoStatus });
+    this.fecharModalStatus();
+
+    this.tarefasService.updateStatus(tarefaId, novoStatus).subscribe({
+      next: (res) => {
+        this.success = res.message;
       },
       error: (err) => {
-        this.error = err?.error?.message ?? 'Falha ao criar tarefa';
+        this.tarefas = this.tarefas.map((tarefa) =>
+          tarefa.id === tarefaId ? { ...tarefa, status_id: statusAnterior } : tarefa
+        );
+        this.tarefasService.updateTaskInAllCache(tarefaId, { status_id: statusAnterior });
+        this.error = err?.error?.message ?? 'Falha ao atualizar status';
+        this.statusModalLoading = false;
+      },
+      complete: () => {
+        this.statusModalLoading = false;
       },
     });
   }
 
-  logout() {
+  excluirTarefa(tarefa: Tarefa): void {
+    const confirmado = window.confirm(`Deseja excluir a tarefa #${tarefa.id}?`);
+    if (!confirmado) return;
+
+    this.error = '';
+    this.success = '';
+
+    const snapshot = [...this.tarefas];
+    this.tarefas = this.tarefas.filter((item) => item.id !== tarefa.id);
+    this.tarefasService.removeTaskFromAllCache(tarefa.id);
+
+    this.tarefasService.remove(tarefa.id).subscribe({
+      next: (res) => {
+        this.success = res.message;
+      },
+      error: (err) => {
+        this.tarefas = snapshot;
+        this.tarefasService.setAllCache(snapshot);
+        this.error = err?.error?.message ?? 'Falha ao excluir tarefa';
+      },
+    });
+  }
+
+  salvarDescricao(): void {
+    if (!this.tarefaSelecionada) return;
+
+    const tarefaId = this.tarefaSelecionada.id;
+    const descricao = this.novaDescricao.trim();
+    if (!descricao) {
+      this.error = 'Descricao e obrigatoria';
+      return;
+    }
+
+    const tarefaAtual = this.tarefas.find((tarefa) => tarefa.id === tarefaId);
+    const descricaoAnterior = tarefaAtual?.descricao ?? '';
+    this.descricaoModalLoading = true;
+    this.error = '';
+    this.success = '';
+
+    this.tarefas = this.tarefas.map((tarefa) =>
+      tarefa.id === tarefaId ? { ...tarefa, descricao } : tarefa
+    );
+    this.tarefasService.updateTaskInAllCache(tarefaId, { descricao });
+    this.fecharModalDescricao();
+
+    this.tarefasService.updateDescription(tarefaId, descricao).subscribe({
+      next: (res) => {
+        this.success = res.message;
+      },
+      error: (err) => {
+        this.tarefas = this.tarefas.map((tarefa) =>
+          tarefa.id === tarefaId ? { ...tarefa, descricao: descricaoAnterior } : tarefa
+        );
+        this.tarefasService.updateTaskInAllCache(tarefaId, { descricao: descricaoAnterior });
+        this.error = err?.error?.message ?? 'Falha ao atualizar descricao';
+        this.descricaoModalLoading = false;
+      },
+      complete: () => {
+        this.descricaoModalLoading = false;
+      },
+    });
+  }
+
+  trackByTarefaId(_index: number, tarefa: Tarefa): number {
+    return tarefa.id;
+  }
+
+  canDelete(tarefa: Tarefa): boolean {
+    return this.loggedUserId !== null && tarefa.criado_por === this.loggedUserId;
+  }
+
+  canEditDescription(tarefa: Tarefa): boolean {
+    return this.loggedUserId !== null && tarefa.criado_por === this.loggedUserId;
+  }
+
+  logout(): void {
     this.auth.logout();
     this.router.navigateByUrl('/login');
   }
