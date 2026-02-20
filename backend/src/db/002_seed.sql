@@ -1,5 +1,6 @@
-INSERT INTO status (id, nome) VALUES
-(1, 'Concluído'),
+﻿INSERT INTO status (id, nome) VALUES
+(1, 'Concluido'),
 (2, 'Em andamento'),
-(3, 'Não iniciada')
+(3, 'Nao iniciada'),
+(4, 'Cancelado')
 ON DUPLICATE KEY UPDATE nome = VALUES(nome);
