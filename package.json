@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only backend/src/app.ts",
+    "db:init": "node backend/scripts/init-db.cjs",
+    "dev": "npm run db:init && ts-node-dev --respawn --transpile-only backend/src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

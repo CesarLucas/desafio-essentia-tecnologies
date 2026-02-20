@@ -20,22 +20,43 @@ Aplicacao web de gerenciamento de tarefas com:
 
 ## Configuracao do backend
 
-1. Ajuste as variaveis em `backend/src/config/env/.env`:
-- `DB_HOST`
-- `DB_PORT`
-- `DB_USER`
-- `DB_PASSWORD`
-- `DB_NAME`
-- `JWT_SECRET`
-- `JWT_EXPIRES_IN`
 
-2. Crie o banco e rode schema/seed.
+MySQL
+Script Automático do Banco:
+- `npm run dev` executa automaticamente `db:init` antes de subir a API.
+- O `db:init` cria o banco (se nao existir), aplica `001_schema.sql` e `002_seed.sql`.
 
-Exemplo no PowerShell (com mysql.exe):
+Teste rapido:
+
+```bash 
+- Apenas para merito de confirmação
+curl http://localhost:3000/health
+```
+Caso de Erro:
+- Configurar banco via terminal
+1. Configure `backend/src/config/env/.env` (ja existe no projeto):
+- `DB_HOST=127.0.0.1`
+- `DB_PORT=3306`
+- `DB_USER=root`
+- `DB_PASSWORD=...`
+- `DB_NAME=techx_todo`
+- `JWT_SECRET=...`
+- `JWT_EXPIRES_IN=1d`
+
+2. Crie o banco:
 
 ```powershell
-Get-Content "C:\Users\cesar.lucas.silva\Projetos\essentia\desafio-essentia-tecnologies\backend\src\db\001_schema.sql" | .\mysql.exe -h 127.0.0.1 -P 3306 -u root -p techx_todo
-Get-Content "C:\Users\cesar.lucas.silva\Projetos\essentia\desafio-essentia-tecnologies\backend\src\db\002_seed.sql" | .\mysql.exe -h 127.0.0.1 -P 3306 -u root -p techx_todo
+mysql -h 127.0.0.1 -P 3306 -u root -p -e "CREATE DATABASE IF NOT EXISTS techx_todo;"
+```
+
+3. Rode schema e seed.
+
+Se `mysql` nao estiver no PATH, use o caminho completo para `mysql.exe`.
+Exemplo no PowerShell:
+
+```powershell
+Get-Content ".\backend\src\db\001_schema.sql" | mysql -h 127.0.0.1 -P 3306 -u root -p techx_todo
+Get-Content ".\backend\src\db\002_seed.sql" | mysql -h 127.0.0.1 -P 3306 -u root -p techx_todo
 ```
 
 ## Executar backend
