@@ -34,7 +34,7 @@ curl http://localhost:3000/health
 ```
 Caso de Erro:
 - Configurar banco via terminal
-1. Configure `backend/src/config/env/.env` (ja existe no projeto):
+1. Configure `backend/src/config/env/.env`:
 - `DB_HOST=127.0.0.1`
 - `DB_PORT=3306`
 - `DB_USER=root`
