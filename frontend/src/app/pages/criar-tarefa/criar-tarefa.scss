@@ -174,6 +174,10 @@ nav {
   color: #0b68bd;
 }
 
+.status[data-status='4'] {
+  color: #8e44ad;
+}
+
 .feedback {
   margin: 0;
 }
@@ -184,6 +188,17 @@ nav {
 
 .feedback.success {
   color: #0a8f62;
+}
+
+.json-response {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid $border;
+  border-radius: 10px;
+  background: #f8faff;
+  color: $text;
+  font-size: 12px;
+  overflow: auto;
 }
 
 .empty {
@@ -276,4 +291,124 @@ nav {
   .task-card {
     grid-template-columns: 1fr;
   }
+}
+/* Estrutura do Formulário no Modal */
+.system-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espaçamento sistemático entre campos */
+  padding-top: 15px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Coloca Vencimento e Status lado a lado */
+  gap: 15px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #4a5568;
+  }
+
+  input, select {
+    padding: 10px;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+
+    &:focus {
+      border-color: #1a237e;
+      outline: none;
+    }
+  }
+}
+
+/* Estilos de Risco e Cinza para consistência visual */
+.texto-riscado {
+  text-decoration: line-through !important;
+  color: #a0a0a0 !important;
+  opacity: 0.7;
+}
+
+.input-finalizado {
+  background-color: #f1f2f6;
+  color: #a0a0a0;
+  text-decoration: line-through;
+}
+
+/* Estilos aplicados via [class.texto-riscado] e [class.input-finalizado] */
+.texto-riscado {
+  text-decoration: line-through !important;
+  color: #a0a0a0 !important;
+  opacity: 0.7;
+  transition: all 0.2s ease; /* Transição suave ao mudar o status */
+}
+
+.input-finalizado {
+  background-color: #f1f2f6 !important;
+  color: #a0a0a0 !important;
+  text-decoration: line-through;
+  border-color: #ced4da !important;
+}
+
+/* Ajuste de respiro do Modal */
+.modal-header {
+  margin-bottom: 20px;
+  h3 { margin: 0; color: #1a237e; }
+  p { margin: 5px 0 0; font-size: 0.85rem; color: #636e72; }
+}
+
+/* Estilos base para os indicadores de data */
+.date-badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-block;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+
+  // Cores dinâmicas baseadas no retorno da função getCorPrazo
+  &.prazo-vencido { 
+    background: #f1f2f6; 
+    color: #636e72; 
+    border-left: 4px solid #636e72; 
+  }
+  &.prazo-curto { 
+    background: #fff5f5; 
+    color: #d63031; 
+    border-left: 4px solid #d63031; 
+  }
+  &.prazo-medio { 
+    background: #fffaf0; 
+    color: #e67e22; 
+    border-left: 4px solid #e67e22; 
+  }
+  &.prazo-longo { 
+    background: #f0fff4; 
+    color: #27ae60; 
+    border-left: 4px solid #27ae60; 
+  }
+  
+  // Estilo para tarefas Finalizadas (1) ou Canceladas (4)
+  &.tarefa-encerrada {
+    color: #a0a0a0 !important;
+    text-decoration: line-through !important;
+    background: #f1f2f6 !important;
+    border-left: 4px solid #ced4da !important;
+    opacity: 0.7;
+  }
+}
+
+/* Garante que o risco na descrição tenha o mesmo comportamento cinza */
+.texto-riscado {
+  text-decoration: line-through !important;
+  color: #a0a0a0 !important;
+  opacity: 0.6;
 }

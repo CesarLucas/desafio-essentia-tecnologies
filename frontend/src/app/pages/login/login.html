@@ -1,11 +1,11 @@
-<div class="login-container">
+﻿<div class="login-container">
   <section class="hero-section">
     <div class="brand-wrapper">
       <div class="logo-placeholder">TechX</div>
     </div>
     <div class="hero-content">
       <h1>Grandes conquistas</h1>
-      <p>começam com pequenas tarefas.</p>
+      <p>comecam com pequenas tarefas.</p>
     </div>
     <div class="hero-footer">
       <div class="status-badge">
@@ -16,7 +16,7 @@
   <main class="form-section">
     <div class="form-wrapper">
       <header class="form-header">
-        <h2>Acesso à Plataforma</h2>
+        <h2>Acesso a Plataforma</h2>
         <p>Insira suas credenciais para gerenciar suas tarefas.</p>
       </header>
 
@@ -31,7 +31,7 @@
             [class.error]="form.get('email')?.invalid && form.get('email')?.touched"
           >
           <small *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
-            Insira um e-mail válido.
+            Insira um e-mail valido.
           </small>
         </div>
 
@@ -41,11 +41,11 @@
             id="senha" 
             type="password" 
             formControlName="senha" 
-            placeholder="••••••••"
+            placeholder="********"
             [class.error]="form.get('senha')?.invalid && form.get('senha')?.touched"
           >
           <small *ngIf="form.get('senha')?.invalid && form.get('senha')?.touched">
-            A senha deve ter no mínimo 6 caracteres.
+            A senha deve ter no minimo 6 caracteres.
           </small>
         </div>
 
@@ -54,13 +54,12 @@
         </div>
 
         <button type="submit" [disabled]="form.invalid || loading" class="btn-primary">
-          <span *ngIf="!loading">Entrar no Sistema</span>
-          <span *ngIf="loading">Entrando...</span>
+          Entrar no Sistema
         </button>
       </form>
 
       <footer class="form-footer">
-        <p>Esqueceu a senha? <a routerLink="/atualizar-senha">Atualizar senha</a></p>
+        <p>Criar nova conta <a routerLink="/cadastro">Criar Usuario</a></p>
       </footer>
     </div>
   </main>
