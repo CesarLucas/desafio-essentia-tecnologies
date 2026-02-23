@@ -26,7 +26,7 @@
         Finalizadas
       </button>
       <button type="button" class="filter-btn" [class.active]="isFiltroAtivo('3')" (click)="setFiltro('3')">
-        Nao iniciadas
+        Não iniciadas
       </button>
       <button type="button" class="filter-btn" [class.active]="isFiltroAtivo('4')" (click)="setFiltro('4')">
         Canceladas
@@ -36,9 +36,9 @@
 
   <main class="content">
     <header class="topbar">
-      <h1>Gestao de tarefas</h1>
+      <h1>Gestão de tarefas</h1>
       <div class="topbar-actions">
-        <span class="user-name">Ola, {{ loggedUserName }}</span>
+        <span class="user-name">Olá, {{ loggedUserName }}</span>
         <button class="btn-logout" type="button" (click)="logout()">Sair</button>
       </div>
     </header>
@@ -85,7 +85,7 @@
 
       <div class="task-card" *ngFor="let tarefa of tarefasFiltradas; trackBy: trackByTarefaId">
         <div class="task-info">
-          <p class="label">Descricao</p>
+          <p class="label">Descrição</p>
           <p class="value" [class.texto-riscado]="(tarefa.status_id === 1 || tarefa.status_id === 4)">{{ tarefa.descricao }}</p>
           <p></p>
           
@@ -109,7 +109,7 @@
           <div class="card-actions">
             <button type="button" class="btn-outline" (click)="abrirModalStatus(tarefa)">Alterar status</button>
             <button type="button" class="btn-outline" *ngIf="canEditDescription(tarefa)" (click)="abrirModalDescricao(tarefa)">
-              Editar descricao
+              Editar descrição
             </button>
             <button type="button" class="btn-danger" *ngIf="canDelete(tarefa)" (click)="excluirTarefa(tarefa)">
               Excluir
@@ -122,9 +122,9 @@
 
 <div class="modal-backdrop" *ngIf="descricaoModalAberto" (click)="fecharModalDescricao()">
   <section class="modal" (click)="$event.stopPropagation()">
-    <h3>Editar descricao</h3>
+    <h3>Editar descrição</h3>
     <p class="modal-subtitle" *ngIf="tarefaSelecionada">Tarefa #{{ tarefaSelecionada.id }}</p>
-    <label for="descricao-input">Descricao</label>
+    <label for="descricao-input">Descrição</label>
     <textarea id="descricao-input" rows="4" [(ngModel)]="novaDescricao" maxlength="300"></textarea>
     <div class="modal-actions">
       <button type="button" class="btn-outline" (click)="fecharModalDescricao()">Cancelar</button>
@@ -146,7 +146,7 @@
     <select id="status-select" [(ngModel)]="statusSelecionado">
       <option [ngValue]="1">Finalizada</option>
       <option [ngValue]="2">Em andamento</option>
-      <option [ngValue]="3">Nao iniciada</option>
+      <option [ngValue]="3">Não iniciada</option>
       <option [ngValue]="4">Cancelado</option>
     </select>
 

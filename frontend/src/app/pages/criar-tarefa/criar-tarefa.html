@@ -34,7 +34,7 @@
 
       <div class="task-card" *ngFor="let tarefa of tarefas">
         <div>
-          <p class="label">Descricao</p>
+          <p class="label">Descrição</p>
           <p class="value" [class.texto-riscado]="tarefa.status_id === 1 || tarefa.status_id === 4">
             {{ tarefa.descricao }}
           </p>
