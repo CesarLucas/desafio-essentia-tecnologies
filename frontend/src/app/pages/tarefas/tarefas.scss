@@ -89,6 +89,11 @@ $border: #e3e8f3;
   border-radius: 0 24px 24px 0;
 }
 
+.sidebar-collapsed .sidebar {
+  width: 76px;
+  padding: 20px 10px;
+}
+
 .sidebar-content h2 {
   margin: 6px 0 28px;
 }

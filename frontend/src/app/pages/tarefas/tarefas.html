@@ -1,7 +1,7 @@
 ﻿<div class="layout" [class.sidebar-collapsed]="sidebarCollapsed">
   <aside class="sidebar">
     <button class="corner-toggle" type="button" (click)="toggleSidebar()" [attr.aria-label]="sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'">
-      {{ sidebarCollapsed ? '>' : '<' }}
+      {{ sidebarCollapsed ? '<' : '>' }}
     </button>
 
     <button class="sidebar-icon" type="button" *ngIf="sidebarCollapsed" (click)="toggleSidebar()" aria-label="Expandir menu">

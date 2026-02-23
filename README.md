@@ -1,6 +1,16 @@
-# Desafio Essentia Technologies - TechX Tasks
+﻿# Desafio Essentia Technologies - TechX Tasks
 
-Aplicacao web de gerenciamento de tarefas com:
+Aplicacao web para gerenciamento de tarefas.
+
+---
+
+## Design & Protótipo
+O projeto foi desenvolvido seguindo o protótipo desenhado no Figma, garantindo consistência visual e uma experiência de usuário intuitiva.
+
+- **Link do Protótipo:** [Acesse o Figma aqui](https://www.figma.com/design/w7qm6EWkbRtwuCgA1GPaiE/TechX?m=auto&t=hrztoJAxA3O2dMwq-1)
+
+---
+
 - Backend: Node.js + TypeScript + Express + MySQL
 - Frontend: Angular
 - Autenticacao: JWT
@@ -14,49 +24,23 @@ Aplicacao web de gerenciamento de tarefas com:
 ## Estrutura
 
 - `backend/src`: API REST
-- `frontend/src`: interface Angular
-- `backend/src/db/001_schema.sql`: criacao das tabelas
-- `backend/src/db/002_seed.sql`: carga inicial de status
+- `backend/src/db/001_schema.sql`: schema do banco
+- `backend/src/db/002_seed.sql`: dados iniciais da tabela `status`
+- `backend/scripts/init-db.cjs`: script de inicializacao do banco
+- `frontend/src`: aplicacao Angular
 
-## Configuracao do backend
+## Configuracao de ambiente
 
+Configure o arquivo `backend/src/config/env/.env` com:
 
-MySQL
-Script Automático do Banco:
-- `npm run dev` executa automaticamente `db:init` antes de subir a API.
-- O `db:init` cria o banco (se nao existir), aplica `001_schema.sql` e `002_seed.sql`.
-
-Teste rapido:
-
-```bash 
-- Apenas para merito de confirmação
-curl http://localhost:3000/health
-```
-Caso de Erro:
-- Configurar banco via terminal
-1. Configure `backend/src/config/env/.env`:
-- `DB_HOST=127.0.0.1`
-- `DB_PORT=3306`
-- `DB_USER=root`
-- `DB_PASSWORD=...`
-- `DB_NAME=techx_todo`
-- `JWT_SECRET=...`
-- `JWT_EXPIRES_IN=1d`
-
-2. Crie o banco:
-
-```powershell
-mysql -h 127.0.0.1 -P 3306 -u root -p -e "CREATE DATABASE IF NOT EXISTS techx_todo;"
-```
-
-3. Rode schema e seed.
-
-Se `mysql` nao estiver no PATH, use o caminho completo para `mysql.exe`.
-Exemplo no PowerShell:
-
-```powershell
-Get-Content ".\backend\src\db\001_schema.sql" | mysql -h 127.0.0.1 -P 3306 -u root -p techx_todo
-Get-Content ".\backend\src\db\002_seed.sql" | mysql -h 127.0.0.1 -P 3306 -u root -p techx_todo
+```env
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=sua_senha
+DB_NAME=techx_todo
+JWT_SECRET=sua_chave_jwt
+JWT_EXPIRES_IN=1d
 ```
 
 ## Executar backend
@@ -68,7 +52,17 @@ npm install
 npm run dev
 ```
 
-API disponivel em `http://localhost:3000`.
+O comando `npm run dev` executa automaticamente:
+1. `db:init` (cria banco se necessario, aplica schema e seed)
+2. sobe a API (`ts-node-dev`)
+
+API: `http://localhost:3000`
+
+Health check:
+
+```bash
+curl http://localhost:3000/health
+```
 
 ## Executar frontend
 
@@ -79,7 +73,7 @@ npm install
 npm start
 ```
 
-Frontend disponivel em `http://localhost:4200`.
+Frontend: `http://localhost:4200`
 
 ## Endpoints principais
 
@@ -89,15 +83,68 @@ Frontend disponivel em `http://localhost:4200`.
 - `PATCH /auth/atualizar-senha`
 
 ### Tarefas
-- `GET /tarefas` (do usuario logado)
+- `GET /tarefas` (tarefas do usuario logado)
 - `GET /tarefas/todas` (todas as tarefas)
 - `POST /tarefas`
 - `PATCH /tarefas/:id/status`
 - `PATCH /tarefas/:id/descricao`
 - `DELETE /tarefas/:id`
 
-## Regras atuais
+## Exemplo de payloads
 
-- Atualizar status: qualquer usuario autenticado.
-- Atualizar descricao: apenas criador da tarefa.
-- Excluir tarefa: apenas criador da tarefa.
+### Criar usuario
+
+`POST /auth/criar-usuario`
+
+```json
+{
+  "nome": "Cesar",
+  "email": "cesar@email.com",
+  "senha": "123456"
+}
+```
+
+### Login
+
+`POST /auth/login`
+
+```json
+{
+  "email": "cesar@email.com",
+  "senha": "123456"
+}
+```
+
+### Criar tarefa
+
+`POST /tarefas`
+
+Header:
+- `Authorization: Bearer <token>`
+
+Body:
+
+```json
+{
+  "descricao": "Preparar apresentacao",
+  "vencimento_em": "2026-03-10",
+  "status_id": 3
+}
+```
+
+## Regras de permissao
+
+- Atualizar status: qualquer usuario autenticado
+- Atualizar descricao: apenas criador da tarefa
+- Excluir tarefa: apenas criador da tarefa
+- Criar Tarefa: apenas data futura/atual pode ser inserida
+
+## Funcionalidades Extras (UX/UI)
+- **Cores Dinâmicas de Prazo**: 
+  - Vermelho: 0-3 dias para o vencimento.
+  - Amarelo: 3-10 dias para o vencimento.
+  - Verde: Mais de 10 dias.
+
+- **Barra de Progresso Inteligente**: Calcula a conclusão baseada apenas em tarefas ativas (Ignora automaticamente as canceladas).
+
+- **Feedback Visual**: Tarefas finalizadas ou canceladas são exibidas com estilo "riscado" e tons acinzentados/roxos para facilitar o foco no que é importante.
