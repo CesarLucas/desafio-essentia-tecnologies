@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 interface LoginResponse {
@@ -22,7 +22,7 @@ interface UpdatePasswordResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly baseUrl = 'http://localhost:3000';
+  private readonly baseUrl = 'http://127.0.0.1:3000';
 
   constructor(private http: HttpClient) {}
 

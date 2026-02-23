@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, tap } from 'rxjs';
 
@@ -7,6 +7,7 @@ export interface Tarefa {
   descricao: string;
   criado_por: number;
   criado_por_nome?: string;
+  vencimento_em: string;
   status_id: number;
   created_at: string;
   updated_at: string;
@@ -14,9 +15,14 @@ export interface Tarefa {
   finalizado_por: number | null;
 }
 
+export interface CreateTarefaResponse {
+  id: number;
+  message: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TarefasService {
-  private readonly baseUrl = 'http://localhost:3000';
+  private readonly baseUrl = 'http://127.0.0.1:3000';
   private allCache: Tarefa[] | null = null;
 
   constructor(private http: HttpClient) {}
@@ -37,8 +43,8 @@ export class TarefasService {
     );
   }
 
-  create(descricao: string, status_id: number) {
-    return this.http.post<{ id: number }>(`${this.baseUrl}/tarefas`, { descricao, status_id });
+  create(descricao: string, vencimento_em: string, status_id: number) {
+    return this.http.post<CreateTarefaResponse>(`${this.baseUrl}/tarefas`, { descricao, vencimento_em, status_id });
   }
 
   updateStatus(id: number, status_id: number) {

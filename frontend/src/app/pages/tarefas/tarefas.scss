@@ -1,3 +1,5 @@
+@use "sass:color"; // IMPORTANTE: Adicione esta linha no topo para resolver os avisos
+
 $primary: #1a237e;
 $bg: #f4f7fe;
 $white: #ffffff;
@@ -19,6 +21,64 @@ $border: #e3e8f3;
   background: $bg;
 }
 
+/* Botão Salvar (Primário) - CORRIGIDO */
+.btn-primary {
+  border: 0;
+  background: #1a237e; 
+  color: #ffffff;
+  padding: 10px 24px;
+  border-radius: 12px; 
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 6px rgba(26, 35, 126, 0.15); // Sombra leve para profundidade
+
+  &:hover:not(:disabled) {
+    // RESOLUÇÃO DO WARNING: Usando color.adjust em vez de lighten
+    background: color.adjust(#1a237e, $lightness: 10%); 
+    transform: translateY(-1px); // Efeito de levante sutil
+    box-shadow: 0 6px 12px rgba(26, 35, 126, 0.25);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #bdc3c7;
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+  }
+}
+
+/* Botão Cancelar (Secundário) */
+.btn-secondary {
+  border: 1px solid #e3e8f3; 
+  background: #ffffff;
+  color: #2d3436; 
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f4f7fe;
+    border-color: #cbd5e0;
+  }
+}
+
+.modal-actions {
+  margin-top: 24px; 
+  display: flex;
+  justify-content: flex-end; 
+  gap: 12px; 
+  padding-top: 15px;
+  border-top: 1px solid #f1f2f6; // Linha divisória sutil
+}
+
+/* SIDEBAR */
 .sidebar {
   position: relative;
   width: 260px;
@@ -103,6 +163,7 @@ nav {
   color: $white;
 }
 
+/* CONTENT AREA */
 .content {
   flex: 1;
   padding: 24px 28px;
@@ -113,6 +174,7 @@ nav {
   border: 1px solid $border;
   border-radius: 16px;
   padding: 16px 20px;
+  margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -180,9 +242,10 @@ nav {
 }
 
 .label {
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   color: $muted;
-  font-size: 12px;
+  font-size: 11px;
+  text-transform: uppercase;
 }
 
 .value,
@@ -192,21 +255,11 @@ nav {
   font-weight: 600;
 }
 
-.status[data-status='1'] {
-  color: #0a8f62;
-}
-
-.status[data-status='2'] {
-  color: #d48a00;
-}
-
-.status[data-status='3'] {
-  color: #0b68bd;
-}
-
-.status[data-status='4'] {
-  color: #8e44ad;
-}
+/* STATUS COLORS */
+.status[data-status='1'] { color: #0a8f62; }
+.status[data-status='2'] { color: #d48a00; }
+.status[data-status='3'] { color: #0b68bd; }
+.status[data-status='4'] { color: #8e44ad; }
 
 .card-actions {
   margin-top: 10px;
@@ -214,25 +267,11 @@ nav {
   gap: 8px;
 }
 
-.error {
-  margin: 0;
-  color: #d63031;
-}
-
-.success {
-  margin: 0;
-  color: #0a8f62;
-}
-
-.empty {
-  margin: 0;
-  color: $muted;
-}
-
+/* MODAIS */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.4);
   display: grid;
   place-items: center;
   z-index: 1000;
@@ -242,10 +281,25 @@ nav {
   width: min(460px, 92vw);
   background: $white;
   border: 1px solid $border;
-  border-radius: 14px;
-  padding: 16px;
+  border-radius: 20px;
+  
+  // REDUZA O PADDING SUPERIOR AQUI
+  padding: 16px 24px 24px 24px; // 16px no topo, 24px nas laterais e base
+  
   display: grid;
-  gap: 10px;
+  gap: 12px; // Diminuir o gap também ajuda a aproximar os elementos
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+
+  h3 {
+    margin: 0; // Remove margens extras do título
+    font-size: 1.4rem;
+    line-height: 1.2;
+  }
+}
+
+.modal-header {
+  margin-bottom: 10px; // Reduz o espaço entre o cabeçalho e o formulário
+  p { margin: 4px 0 0; }
 }
 
 .modal-subtitle {
@@ -254,61 +308,76 @@ nav {
   font-size: 14px;
 }
 
-.modal select {
-  padding: 10px;
+.modal select, .modal textarea {
+  padding: 12px;
   border: 1px solid $border;
   border-radius: 10px;
+  font-family: inherit;
 }
 
-.modal textarea {
-  padding: 10px;
-  border: 1px solid $border;
-  border-radius: 10px;
-  resize: vertical;
+/* SUMMARY CARD */
+.summary-card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  border: 1px solid #eef2f7;
+
+  .summary-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    h3 { margin: 0; color: #1a237e; font-weight: 700; }
+    p { margin: 4px 0 0; font-size: 0.9rem; color: $muted; }
+    .percentage-display { font-size: 1.8rem; font-weight: 800; }
+  }
+
+  .progress-track {
+    height: 10px;
+    background: #edf2f7;
+    border-radius: 5px;
+    overflow: hidden;
+    .progress-fill { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+  }
 }
 
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+.texto-riscado {
+  text-decoration: line-through;
+  color: #a0a0a0;
+  opacity: 0.7;
 }
 
-.sidebar-collapsed .sidebar {
-  width: 84px;
-  padding-inline: 8px;
+/* DATE BADGES */
+.date-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+  font-weight: 700;
+  font-size: 0.85rem;
+
+  &.tarefa-finalizada, &.tarefa-encerrada {
+    color: #a0a0a0 !important;
+    text-decoration: line-through;
+    background: #f5f5f5 !important;
+    border-left: 3px solid #dcdcdc !important;
+    opacity: 0.8;
+  }
+
+  &.prazo-curto { color: #d63031; background: #fff5f5; border-left: 3px solid #d63031; }
+  &.prazo-medio { color: #e67e22; background: #fffaf0; border-left: 3px solid #e67e22; }
+  &.prazo-longo { color: #27ae60; background: #f0fff4; border-left: 3px solid #27ae60; }
+  &.prazo-vencido { color: #636e72; background: #f1f2f6; text-decoration: line-through; }
 }
 
+/* RESPONSIVIDADE */
 @media (max-width: 900px) {
-  .layout {
-    flex-direction: column;
-  }
-
-  .sidebar {
-    width: 100%;
-    border-radius: 0;
-    padding: 16px;
-  }
-
-  .sidebar-collapsed .sidebar {
-    width: 100%;
-  }
-
-  .corner-toggle {
-    right: 14px;
-    top: 14px;
-  }
-
-  .content {
-    padding: 16px;
-  }
-
-  .topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .task-card {
-    grid-template-columns: 1fr;
-  }
+  .layout { flex-direction: column; }
+  .sidebar { width: 100%; border-radius: 0; padding: 16px; }
+  .sidebar-collapsed .sidebar { width: 100%; }
+  .corner-toggle { right: 14px; top: 14px; }
+  .content { padding: 16px; }
+  .topbar { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .task-card { grid-template-columns: 1fr; }
 }

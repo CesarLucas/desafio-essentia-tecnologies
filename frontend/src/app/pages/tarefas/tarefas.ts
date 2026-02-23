@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -58,6 +58,60 @@ export class TarefasComponent implements OnInit {
     return this.tarefas.filter((tarefa) => tarefa.status_id.toString() === this.filtroAtual);
   }
 
+get estatisticasPessoais() {
+  const meuId = this.auth.getLoggedUserId();
+  const minhasTarefas = this.tarefas.filter(t => t.criado_por === meuId);
+  
+  // Filtr apenas as tarefas ATIVAS (Ignoramos as Canceladas - ID 4)
+  const tarefasAtivas = minhasTarefas.filter(t => t.status_id !== 4);
+  
+  if (tarefasAtivas.length === 0) {
+    return { 
+      porcentagem: 100, 
+      concluidas: 0, 
+      faltam: 0, 
+      total: 0,
+      isVazio: true 
+    };
+  }
+
+  const concluidas = tarefasAtivas.filter(t => t.status_id === 1).length;
+  const totalAtivas = tarefasAtivas.length;
+  const porcentagem = Math.round((concluidas / totalAtivas) * 100);
+
+  return { 
+    porcentagem, 
+    concluidas, 
+    total: totalAtivas,
+    faltam: totalAtivas - concluidas,
+    isVazio: false 
+  };
+}
+
+getCorBarra(): string {
+  const p = this.estatisticasPessoais.porcentagem;
+  if (p < 30) return '#ff7675'; // Vermelho
+  if (p < 70) return '#fdcb6e'; // Amarelo
+  return '#00b894';             // Verde
+}
+
+getClassePrazo(dataVencimento: string): string {
+  if (!dataVencimento) return '';
+  
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+  const vencimento = new Date(dataVencimento);
+  vencimento.setHours(0, 0, 0, 0);
+
+  const diffTempo = vencimento.getTime() - hoje.getTime();
+  const diffDias = Math.ceil(diffTempo / (1000 * 60 * 60 * 24));
+
+  if (diffDias < 0) return 'prazo-vencido'; 
+  if (diffDias <= 3) return 'prazo-curto';  // 0-3 dias: Vermelho
+  if (diffDias <= 10) return 'prazo-medio'; // 3-10 dias: Amarelo
+  return 'prazo-longo';                     // +10 dias: Verde
+}
+
   getStatusNome(statusId: number): string {
     const statusMap: Record<number, string> = {
       1: 'Finalizada',
@@ -66,6 +120,13 @@ export class TarefasComponent implements OnInit {
       4: 'Cancelado',
     };
     return statusMap[statusId] ?? 'Desconhecido';
+  }
+
+  formatarData(data: string): string {
+    if (!data) return '-';
+    const [ano, mes, dia] = data.slice(0, 10).split('-');
+    if (!ano || !mes || !dia) return data;
+    return `${dia}/${mes}/${ano}`;
   }
 
   loadTarefas(): void {

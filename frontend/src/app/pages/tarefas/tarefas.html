@@ -1,4 +1,4 @@
-<div class="layout" [class.sidebar-collapsed]="sidebarCollapsed">
+﻿<div class="layout" [class.sidebar-collapsed]="sidebarCollapsed">
   <aside class="sidebar">
     <button class="corner-toggle" type="button" (click)="toggleSidebar()" [attr.aria-label]="sidebarCollapsed ? 'Expandir menu' : 'Recolher menu'">
       {{ sidebarCollapsed ? '>' : '<' }}
@@ -34,11 +34,7 @@
     </div>
   </aside>
 
-
-<!-- Sidebar -->
-  
-
-<main class="content">
+  <main class="content">
     <header class="topbar">
       <h1>Gestao de tarefas</h1>
       <div class="topbar-actions">
@@ -46,6 +42,38 @@
         <button class="btn-logout" type="button" (click)="logout()">Sair</button>
       </div>
     </header>
+
+    <section class="summary-card" *ngIf="tarefas.length > 0">
+      <div class="summary-info">
+        <div>
+          <h3>Seu Progresso</h3>
+          <p *ngIf="estatisticasPessoais.isVazio">Você não possui tarefas pendentes em seu Nome no momento.</p>
+          <p *ngIf="!estatisticasPessoais.isVazio">
+            Você concluiu <strong>{{ estatisticasPessoais.concluidas }}</strong> de <strong>{{ estatisticasPessoais.total }}</strong> tarefas.
+          </p>
+        </div>
+        <div class="percentage-display" [style.color]="getCorBarra()">
+          {{ estatisticasPessoais.porcentagem }}%
+        </div>
+      </div>
+      
+      <div class="progress-track">
+        <div class="progress-fill" 
+            [style.width.%]="estatisticasPessoais.porcentagem" 
+            [style.background-color]="getCorBarra()">
+        </div>
+      </div>
+      
+      <small class="counter-text">
+        <span *ngIf="estatisticasPessoais.isVazio"> Parabéns! Você está livre por enquanto.</span>
+        <span *ngIf="!estatisticasPessoais.isVazio && estatisticasPessoais.faltam > 0">
+          Faltam {{ estatisticasPessoais.faltam }} tarefas para o seu 100%!
+        </span>
+        <span *ngIf="!estatisticasPessoais.isVazio && estatisticasPessoais.faltam === 0">
+           Incrível! Todas as suas tarefas foram concluídas.
+        </span>
+      </small>
+    </section>
 
     <section class="panel">
       <p class="error" *ngIf="error">{{ error }}</p>
@@ -56,40 +84,48 @@
       </p>
 
       <div class="task-card" *ngFor="let tarefa of tarefasFiltradas; trackBy: trackByTarefaId">
-        <div>
+        <div class="task-info">
           <p class="label">Descricao</p>
-          <p class="value">{{ tarefa.descricao }}</p>
+          <p class="value" [class.texto-riscado]="(tarefa.status_id === 1 || tarefa.status_id === 4)">{{ tarefa.descricao }}</p>
           <p></p>
+          
+          <p class="label">Vencimento</p>
+          <p class="value date-badge" 
+            [ngClass]="(tarefa.status_id === 1 || tarefa.status_id === 4) ? 'tarefa-encerrada' : getClassePrazo(tarefa.vencimento_em)">
+            {{ formatarData(tarefa.vencimento_em) }}
+          </p>
+          <p></p>
+
           <p class="label">Criador</p>
           <p class="value">{{ tarefa.criado_por_nome || ('Usuario #' + tarefa.criado_por) }}</p>
         </div>
 
-        <div>
+        <div class="task-actions-section">
           <p class="label">Status</p>
           <p class="status" [attr.data-status]="tarefa.status_id">
             {{ getStatusNome(tarefa.status_id) }}
           </p>
+          
           <div class="card-actions">
             <button type="button" class="btn-outline" (click)="abrirModalStatus(tarefa)">Alterar status</button>
-            <button type="button" class="btn-outline" *ngIf="canEditDescription(tarefa)" (click)="abrirModalDescricao(tarefa)">Editar descricao</button>
-            <button type="button" class="btn-danger" *ngIf="canDelete(tarefa)" (click)="excluirTarefa(tarefa)">Excluir</button>
+            <button type="button" class="btn-outline" *ngIf="canEditDescription(tarefa)" (click)="abrirModalDescricao(tarefa)">
+              Editar descricao
+            </button>
+            <button type="button" class="btn-danger" *ngIf="canDelete(tarefa)" (click)="excluirTarefa(tarefa)">
+              Excluir
+            </button>
           </div>
         </div>
-      </div>
-    </section>
+      </div> </section>
   </main>
 </div>
 
-<div class="modal-backdrop" *ngIf="descricaoModalAberto">
-  <section class="modal">
+<div class="modal-backdrop" *ngIf="descricaoModalAberto" (click)="fecharModalDescricao()">
+  <section class="modal" (click)="$event.stopPropagation()">
     <h3>Editar descricao</h3>
-    <p class="modal-subtitle" *ngIf="tarefaSelecionada">
-      Tarefa #{{ tarefaSelecionada.id }}
-    </p>
-
+    <p class="modal-subtitle" *ngIf="tarefaSelecionada">Tarefa #{{ tarefaSelecionada.id }}</p>
     <label for="descricao-input">Descricao</label>
     <textarea id="descricao-input" rows="4" [(ngModel)]="novaDescricao" maxlength="300"></textarea>
-
     <div class="modal-actions">
       <button type="button" class="btn-outline" (click)="fecharModalDescricao()">Cancelar</button>
       <button type="button" class="btn-primary" [disabled]="descricaoModalLoading" (click)="salvarDescricao()">
@@ -99,13 +135,13 @@
   </section>
 </div>
 
-<div class="modal-backdrop" *ngIf="statusModalAberto">
-  <section class="modal">
+<div class="modal-backdrop" *ngIf="statusModalAberto" (click)="fecharModalStatus()">
+  <section class="modal" (click)="$event.stopPropagation()">
     <h3>Atualizar status</h3>
     <p class="modal-subtitle" *ngIf="tarefaSelecionada">
       Tarefa #{{ tarefaSelecionada.id }} - {{ tarefaSelecionada.descricao }}
     </p>
-
+    
     <label for="status-select">Novo status</label>
     <select id="status-select" [(ngModel)]="statusSelecionado">
       <option [ngValue]="1">Finalizada</option>
@@ -115,7 +151,7 @@
     </select>
 
     <div class="modal-actions">
-      <button type="button" class="btn-outline" (click)="fecharModalStatus()">Cancelar</button>
+      <button type="button" class="btn-secondary" (click)="fecharModalStatus()">Cancelar</button>
       <button type="button" class="btn-primary" [disabled]="statusModalLoading" (click)="salvarStatus()">
         {{ statusModalLoading ? 'Salvando...' : 'Salvar' }}
       </button>
