@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS tarefa (
   id INT AUTO_INCREMENT PRIMARY KEY,
   descricao VARCHAR(255) NOT NULL,
   criado_por INT NOT NULL,
+  vencimento_em DATE NULL,
   status_id INT NOT NULL,
   finalizado_em TIMESTAMP NULL,
   finalizado_por INT NULL,

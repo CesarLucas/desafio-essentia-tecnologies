@@ -1,5 +1,6 @@
-export interface CreateTarefaDto {
+﻿export interface CreateTarefaDto {
   descricao: string;
+  vencimento_em: string;
   status_id: number;
 }
 
@@ -13,5 +14,5 @@ export interface UpdateTarefaDescricaoDto {
 
 export interface TarefaResponseDto {
   id?: number;
-  message: string
+  message: string;
 }

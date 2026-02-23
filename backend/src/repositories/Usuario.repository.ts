@@ -3,9 +3,10 @@ import { Usuario } from "../models/Usuario";
 
 export class UsuarioRepository {
   async findByEmail(email: string): Promise<Usuario | null> {
-    const [rows] = await pool.query(
+    const [rows] = await pool.execute(
       `SELECT id, nome, email, password_hash, created_at, updated_at
-       FROM usuario WHERE email = ?`,
+       FROM usuario WHERE email = ?
+       LIMIT 1`,
       [email]
     );
     const arr = rows as Usuario[];

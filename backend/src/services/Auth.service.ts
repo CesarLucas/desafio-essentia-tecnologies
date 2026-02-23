@@ -28,12 +28,12 @@ export class AuthService {
   async login(email: string, senha: string) {
     const user = await this.users.findByEmail(email);
     if (!user) {
-      throw new HttpError(401, "Credenciais invalidas");
+      throw new HttpError(401, "Email ou senha invalidos");
     }
 
     const passwordMatch = await bcrypt.compare(senha, user.password_hash);
     if (!passwordMatch) {
-      throw new HttpError(401, "Credenciais invalidas");
+      throw new HttpError(401, "Email ou senha invalidos");
     }
 
     if (!env.JWT_SECRET) {

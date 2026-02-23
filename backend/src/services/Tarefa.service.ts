@@ -1,10 +1,16 @@
-import { TarefaRepository } from "../repositories/Tarefa.repository";
+﻿import { TarefaRepository } from "../repositories/Tarefa.repository";
 import { CreateTarefaDto, TarefaResponseDto, UpdateTarefaDescricaoDto, UpdateTarefaStatusDto } from "../dtos/Tarefa.dto";
 
 export class TarefaHttpError extends Error {
   constructor(public statusCode: number, message: string) {
     super(message);
   }
+}
+
+function isValidDateOnly(date: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return false;
+  const d = new Date(`${date}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === date;
 }
 
 export class TarefaService {
@@ -21,16 +27,32 @@ export class TarefaService {
   async create(userId: number, dto: CreateTarefaDto): Promise<TarefaResponseDto> {
     const descricao = dto.descricao?.trim();
     if (!descricao) {
-      throw new TarefaHttpError(400, "Descrição é obrigatoria");
+      throw new TarefaHttpError(400, "Descricao e obrigatoria");
     }
+
+    const vencimento = dto.vencimento_em?.trim();
+    if (!vencimento || !isValidDateOnly(vencimento)) {
+      throw new TarefaHttpError(400, "Formato invalido. Use o formato YYYY-MM-DD");
+    }
+
+    if (vencimento) {
+    const dataVencimento = new Date(vencimento + 'T00:00:00'); 
+    const hoje = new Date();
+
+    hoje.setHours(0, 0, 0, 0);
+    dataVencimento.setHours(0, 0, 0, 0);
+
+    if (dataVencimento < hoje) {
+      throw new TarefaHttpError(400, "Prazos retroativos não são permitidos. Escolha hoje ou uma data futura.");
+    }
+  }
 
     if (!Number.isInteger(dto.status_id) || dto.status_id <= 0) {
       throw new TarefaHttpError(400, "status_id invalido");
     }
 
-    const id = await this.repo.create(userId, descricao, dto.status_id);
-    return { id,
-      message: "Foi criado com sucesso uma Tarefa"};
+    const id = await this.repo.create(userId, descricao, vencimento, dto.status_id);
+    return { id, message: "Foi criado com sucesso uma Tarefa" };
   }
 
   async updateStatus(userId: number, taskId: number, dto: UpdateTarefaStatusDto) {

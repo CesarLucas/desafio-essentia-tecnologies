@@ -3,6 +3,7 @@ export interface Tarefa {
   descricao: string;
   criado_por: number;
   criado_por_nome?: string;
+  vencimento_em: Date;
   status_id: number;
   finalizado_em: Date | null;
   finalizado_por: number | null;

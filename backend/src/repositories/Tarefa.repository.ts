@@ -1,10 +1,10 @@
-import { pool } from "../db/pool";
+﻿import { pool } from "../db/pool";
 import { Tarefa } from "../models/Tarefa";
 
 export class TarefaRepository {
   async findAll(): Promise<Tarefa[]> {
     const [rows] = await pool.query(
-      `SELECT t.id, t.descricao, t.criado_por, u.nome AS criado_por_nome, t.status_id, t.finalizado_em, t.finalizado_por, t.created_at, t.updated_at
+      `SELECT t.id, t.descricao, t.criado_por, u.nome AS criado_por_nome, t.vencimento_em, t.status_id, t.finalizado_em, t.finalizado_por, t.created_at, t.updated_at
        FROM tarefa t
        INNER JOIN usuario u ON u.id = t.criado_por
        ORDER BY t.id DESC`
@@ -14,7 +14,7 @@ export class TarefaRepository {
 
   async findAllByUser(userId: number): Promise<Tarefa[]> {
     const [rows] = await pool.query(
-      `SELECT t.id, t.descricao, t.criado_por, u.nome AS criado_por_nome, t.status_id, t.finalizado_em, t.finalizado_por, t.created_at, t.updated_at
+      `SELECT t.id, t.descricao, t.criado_por, u.nome AS criado_por_nome, t.vencimento_em, t.status_id, t.finalizado_em, t.finalizado_por, t.created_at, t.updated_at
        FROM tarefa t
        INNER JOIN usuario u ON u.id = t.criado_por
        WHERE t.criado_por = ?
@@ -24,10 +24,10 @@ export class TarefaRepository {
     return rows as Tarefa[];
   }
 
-  async create(userId: number, descricao: string, statusId: number): Promise<number> {
+  async create(userId: number, descricao: string, vencimentoEm: string, statusId: number): Promise<number> {
     const [result] = await pool.execute(
-      `INSERT INTO tarefa (descricao, criado_por, status_id) VALUES (?, ?, ?)`,
-      [descricao, userId, statusId]
+      `INSERT INTO tarefa (descricao, criado_por, vencimento_em, status_id) VALUES (?, ?, ?, ?)`,
+      [descricao, userId, vencimentoEm, statusId]
     );
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (result as any).insertId as number;
