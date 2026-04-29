@@ -1,0 +1,414 @@
+$primary: #1a237e;
+$bg: #f4f7fe;
+$white: #ffffff;
+$text: #2d3436;
+$muted: #636e72;
+$border: #e3e8f3;
+
+:host {
+  display: block;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  background: $bg;
+}
+
+.sidebar {
+  position: relative;
+  width: 260px;
+  background: $primary;
+  color: $white;
+  padding: 20px 14px;
+  transition: width 0.3s ease;
+  border-radius: 0 24px 24px 0;
+}
+
+.sidebar-content h2 {
+  margin: 6px 0 28px;
+}
+
+.corner-toggle {
+  position: absolute;
+  top: 18px;
+  right: -12px;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: $white;
+  color: $primary;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sidebar-icon {
+  margin-top: 42px;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.12);
+  color: $white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+nav {
+  display: grid;
+  gap: 8px;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: $white;
+}
+
+.content {
+  flex: 1;
+  padding: 24px 28px;
+}
+
+.topbar {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.topbar h1 {
+  margin: 0;
+  color: $text;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-logout {
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-primary {
+  border: 0;
+  background: $primary;
+  color: $white;
+}
+
+.btn-secondary {
+  border: 1px solid $border;
+  background: $white;
+  color: $text;
+}
+
+.btn-logout {
+  border: 1px solid $border;
+  background: $white;
+  color: $text;
+}
+
+.panel {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.panel h2 {
+  margin: 0 0 4px;
+}
+
+.task-card {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 14px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+}
+
+.label {
+  margin: 0 0 6px;
+  color: $muted;
+  font-size: 12px;
+}
+
+.value,
+.status {
+  margin: 0;
+  color: $text;
+  font-weight: 600;
+}
+
+.status[data-status='1'] {
+  color: #0a8f62;
+}
+
+.status[data-status='2'] {
+  color: #d48a00;
+}
+
+.status[data-status='3'] {
+  color: #0b68bd;
+}
+
+.status[data-status='4'] {
+  color: #8e44ad;
+}
+
+.feedback {
+  margin: 0;
+}
+
+.feedback.error {
+  color: #d63031;
+}
+
+.feedback.success {
+  color: #0a8f62;
+}
+
+.json-response {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid $border;
+  border-radius: 10px;
+  background: #f8faff;
+  color: $text;
+  font-size: 12px;
+  overflow: auto;
+}
+
+.empty {
+  margin: 0;
+  color: $muted;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 26, 64, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  z-index: 1000;
+}
+
+.modal {
+  width: min(100%, 480px);
+  background: $white;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 30px 50px rgba(26, 35, 126, 0.25);
+}
+
+.modal h3 {
+  margin: 0 0 14px;
+}
+
+.modal form {
+  display: grid;
+  gap: 10px;
+}
+
+.modal label {
+  color: $text;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.modal input,
+.modal select {
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.modal-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.sidebar-collapsed .sidebar {
+  width: 84px;
+  padding-inline: 8px;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-radius: 0;
+    padding: 16px;
+  }
+
+  .sidebar-collapsed .sidebar {
+    width: 100%;
+  }
+
+  .corner-toggle {
+    right: 14px;
+    top: 14px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .task-card {
+    grid-template-columns: 1fr;
+  }
+}
+/* Estrutura do Formulário no Modal */
+.system-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espaçamento sistemático entre campos */
+  padding-top: 15px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Coloca Vencimento e Status lado a lado */
+  gap: 15px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #4a5568;
+  }
+
+  input, select {
+    padding: 10px;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    font-size: 1rem;
+
+    &:focus {
+      border-color: #1a237e;
+      outline: none;
+    }
+  }
+}
+
+/* Estilos de Risco e Cinza para consistência visual */
+.texto-riscado {
+  text-decoration: line-through !important;
+  color: #a0a0a0 !important;
+  opacity: 0.7;
+}
+
+.input-finalizado {
+  background-color: #f1f2f6;
+  color: #a0a0a0;
+  text-decoration: line-through;
+}
+
+/* Estilos aplicados via [class.texto-riscado] e [class.input-finalizado] */
+.texto-riscado {
+  text-decoration: line-through !important;
+  color: #a0a0a0 !important;
+  opacity: 0.7;
+  transition: all 0.2s ease; /* Transição suave ao mudar o status */
+}
+
+.input-finalizado {
+  background-color: #f1f2f6 !important;
+  color: #a0a0a0 !important;
+  text-decoration: line-through;
+  border-color: #ced4da !important;
+}
+
+/* Ajuste de respiro do Modal */
+.modal-header {
+  margin-bottom: 20px;
+  h3 { margin: 0; color: #1a237e; }
+  p { margin: 5px 0 0; font-size: 0.85rem; color: #636e72; }
+}
+
+/* Estilos base para os indicadores de data */
+.date-badge {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-block;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+
+  // Cores dinâmicas baseadas no retorno da função getCorPrazo
+  &.prazo-vencido { 
+    background: #f1f2f6; 
+    color: #636e72; 
+    border-left: 4px solid #636e72; 
+  }
+  &.prazo-curto { 
+    background: #fff5f5; 
+    color: #d63031; 
+    border-left: 4px solid #d63031; 
+  }
+  &.prazo-medio { 
+    background: #fffaf0; 
+    color: #e67e22; 
+    border-left: 4px solid #e67e22; 
+  }
+  &.prazo-longo { 
+    background: #f0fff4; 
+    color: #27ae60; 
+    border-left: 4px solid #27ae60; 
+  }
+  
+  // Estilo para tarefas Finalizadas (1) ou Canceladas (4)
+  &.tarefa-encerrada {
+    color: #a0a0a0 !important;
+    text-decoration: line-through !important;
+    background: #f1f2f6 !important;
+    border-left: 4px solid #ced4da !important;
+    opacity: 0.7;
+  }
+}
+
+/* Garante que o risco na descrição tenha o mesmo comportamento cinza */
+.texto-riscado {
+  text-decoration: line-through !important;
+  color: #a0a0a0 !important;
+  opacity: 0.6;
+}

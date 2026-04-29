@@ -1,0 +1,177 @@
+@use "sass:color"; 
+
+// Variáveis do Sistema
+$primary: #1a237e; // Azul TechX
+$bg-light: #f4f7fe;
+$text-main: #2d3436;
+$text-muted: #636e72;
+$error: #d63031;
+$white: #ffffff;
+
+* {
+  box-sizing: border-box; // Garante que paddings não estiquem a largura dos elementos
+}
+
+.login-container {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  height: 100vh;
+  font-family: 'Inter', -apple-system, sans-serif;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+    .hero-section { display: none; }
+  }
+}
+
+// Estilo do Lado Esquerdo (Hero)
+.hero-section {
+  background-color: $bg-light;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 60px;
+  position: relative;
+
+  .logo-placeholder {
+    font-size: 2rem;
+    font-weight: 800;
+    color: $primary;
+    letter-spacing: -1px;
+  }
+
+  .hero-content {
+    h1 {
+      font-size: 3.5rem;
+      color: $primary;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+    p {
+      font-size: 1.5rem;
+      color: $text-muted;
+      font-weight: 300;
+    }
+  }
+
+  .status-badge {
+    font-size: 0.8rem;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    .dot {
+      width: 8px;
+      height: 8px;
+      background: #00b894;
+      border-radius: 50%;
+    }
+  }
+}
+
+// Estilo do Lado Direito (Formulário)
+.form-section {
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+
+  .form-wrapper {
+    width: 100%;
+    max-width: 400px; // Largura total controlada para e-mail, senha e erro
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-header {
+    margin-bottom: 32px;
+    h2 { font-size: 1.8rem; color: $text-main; margin-bottom: 8px; }
+    p { color: $text-muted; font-size: 0.95rem; }
+  }
+}
+
+// Componentes do Formulário
+.auth-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .input-group {
+    margin-bottom: 20px;
+    width: 100%;
+    
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: $text-main;
+    }
+
+    input {
+      width: 100%; // Ocupa a largura total do wrapper
+      padding: 12px 16px;
+      border: 1.5px solid #dfe6e9;
+      border-radius: 8px;
+      transition: all 0.2s;
+      
+      &:focus {
+        outline: none;
+        border-color: $primary;
+        box-shadow: 0 0 0 3px rgba($primary, 0.1);
+      }
+
+      &.error { border-color: $error; }
+    }
+
+    small { color: $error; font-size: 0.75rem; margin-top: 4px; display: block; }
+  }
+}
+
+// MENSAGEM DE ERRO: Alinhada perfeitamente com os inputs
+.error-message {
+  background: rgba($error, 0.1);
+  color: $error;
+  padding: 12px;
+  width: 100%;            // Largura total igual aos campos de texto
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+  text-align: center;
+  border: 1px solid rgba($error, 0.2);
+}
+
+// BOTÃO: Centralizado e com largura equilibrada
+.btn-primary {
+  display: block;
+  width: 80%;             // Largura definida para permitir centralização visual
+  min-width: 200px;
+  margin: 10px auto;      /* Centraliza horizontalmente no container */
+  padding: 14px;
+  border-radius: 12px;
+  background: $primary;
+  color: white;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:disabled { 
+    background: #bdc3c7;
+    cursor: not-allowed; 
+    opacity: 0.7;
+  }
+  
+  &:hover:not(:disabled) { 
+    background: color.adjust($primary, $lightness: 8%);
+    transform: translateY(-1px);
+  }
+}
+
+.form-footer {
+  margin-top: 20px;
+  text-align: center;
+  p { font-size: 0.9rem; color: $text-muted; }
+  a { color: $primary; font-weight: 700; text-decoration: none; &:hover { text-decoration: underline; } }
+}

@@ -1,0 +1,66 @@
+﻿<div class="login-container">
+  <section class="hero-section">
+    <div class="brand-wrapper">
+      <div class="logo-placeholder">TechX</div>
+    </div>
+    <div class="hero-content">
+      <h1>Grandes conquistas</h1>
+      <p>comecam com pequenas tarefas.</p>
+    </div>
+    <div class="hero-footer">
+      <div class="status-badge">
+      </div>
+    </div>
+  </section>
+
+  <main class="form-section">
+    <div class="form-wrapper">
+      <header class="form-header">
+        <h2>Acesso a Plataforma</h2>
+        <p>Insira suas credenciais para gerenciar suas tarefas.</p>
+      </header>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-form">
+        <div class="input-group">
+          <label for="email">E-mail Corporativo</label>
+          <input 
+            id="email" 
+            type="email" 
+            formControlName="email" 
+            placeholder="exemplo@techx.com"
+            [class.error]="form.get('email')?.invalid && form.get('email')?.touched"
+          >
+          <small *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+            Insira um e-mail valido.
+          </small>
+        </div>
+
+        <div class="input-group">
+          <label for="senha">Senha</label>
+          <input 
+            id="senha" 
+            type="password" 
+            formControlName="senha" 
+            placeholder="********"
+            [class.error]="form.get('senha')?.invalid && form.get('senha')?.touched"
+          >
+          <small *ngIf="form.get('senha')?.invalid && form.get('senha')?.touched">
+            A senha deve ter no minimo 6 caracteres.
+          </small>
+        </div>
+
+        <div class="error-message" *ngIf="error">
+          {{ error }}
+        </div>
+
+        <button type="submit" [disabled]="form.invalid || loading" class="btn-primary">
+          Entrar no Sistema
+        </button>
+      </form>
+
+      <footer class="form-footer">
+        <p>Criar nova conta <a routerLink="/cadastro">Criar Usuario</a></p>
+      </footer>
+    </div>
+  </main>
+</div>

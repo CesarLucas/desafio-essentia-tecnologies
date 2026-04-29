@@ -1,0 +1,29 @@
+<section class="auth-page">
+  <h1>Atualizar senha</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label>
+      Email
+      <input type="email" formControlName="email" />
+    </label>
+
+    <label>
+      Nova senha
+      <input type="password" formControlName="novaSenha" />
+    </label>
+
+    <label>
+      Confirmar senha
+      <input type="password" formControlName="confirmarSenha" />
+    </label>
+
+    <button type="submit" [disabled]="loading || form.invalid">
+      {{ loading ? 'Atualizando...' : 'Atualizar senha' }}
+    </button>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+    <p class="success" *ngIf="success">{{ success }}</p>
+  </form>
+
+  <p><a routerLink="/login">Voltar para login</a></p>
+</section>

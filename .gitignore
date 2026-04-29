@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# build outputs
+dist/
+build/
+coverage/
+out-tsc/
+
+# environment
+backend/src/config/env/.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
